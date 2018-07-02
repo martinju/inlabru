@@ -26,11 +26,13 @@ init.tutorial()
 
 Introduction
 ----------------------------------
+
 We are going to fit spatial models to the gorilla data, using factor and continuous explanatory
 variables in this practical. We will fit one using the factor variable `vegetation`, the other using
 the continuous covariate `elevation`
 
 (Jump to the bottom of the practical if you want to start gently with a 1D example!)
+
 Get the data
 -----------------------------------
 
@@ -48,12 +50,13 @@ boundary <- gorillas$boundary
 gcov <- gorillas$gcov
 ```
 
-### Vegetation type
+Factor covariates
+-----------------------------------
+
 Look at the vegetation type, nests and boundary:
 
 
 ```{r warning=FALSE,message=FALSE}
-
 ggplot() + 
   gg(gcov$vegetation) + 
   gg(boundary) + 
@@ -65,7 +68,6 @@ Or, with the mesh:
 
 
 ```{r warning=FALSE,message=FALSE}
-
 ggplot() + 
   gg(gcov$vegetation) + 
   gg(mesh) + 
@@ -84,7 +86,6 @@ anything), as follows:
 
 
 ```{r warning=FALSE,message=FALSE}
-
 mdl1 <- coordinates ~ veg(map = gcov$vegetation, model = "factor") - Intercept 
 ```
 
@@ -102,7 +103,6 @@ The `expand.factor.strategy` needs to be set explicitly
 on some systems but not on others; debugging is in progress!
 
 ```{r results='hide',warning=FALSE,message=FALSE,eval=TRUE}
-
 fit1 <- lgcp(mdl1, nests, samplers = boundary, domain = list(coordinates = mesh),
              options = list(control.fixed = list(expand.factor.strategy = "inla")))
 ```
@@ -117,11 +117,8 @@ a `SpatialPixelsDataFrame` only within the boundary, using its `mask` argument, 
 
 
 ```{r warning=FALSE,message=FALSE,eval=TRUE}
-
 df <- pixels(mesh, mask = boundary)
 int1 <- predict(fit1, data = df, ~ exp(veg))
-
-```{r warning=FALSE,message=FALSE}
 
 ggplot() + 
   gg(int1) + 
@@ -136,7 +133,6 @@ that have no nests, and some areas of predicted low density that have nests. Wha
 about the estimated abundance (there are really 647 nests there):
 
 ```{r warning=FALSE,message=FALSE,eval=TRUE}
-
 ips <- ipoints(boundary, mesh)
 Lambda1 <- predict(fit1, ips, ~ sum(weight * exp(veg)))
 Lambda1
@@ -148,7 +144,6 @@ the vegetation covariate, using an SPDE:
 
 
 ```{r results='hide',warning=FALSE,message=FALSE,eval=TRUE}
-
 pcmatern <- inla.spde2.pcmatern(mesh, 
                                 prior.sigma = c(0.1, 0.01), 
                                 prior.range = c(5, 0.01))
@@ -163,7 +158,6 @@ fit2 <- lgcp(mdl2, nests, samplers = boundary,
 And plot the median intensity surface
 
 ```{r warning=FALSE,message=FALSE,eval=TRUE}
-
 df <- pixels(mesh, mask = boundary)
 int2 <- predict(fit2, df, ~ exp(mySmooth + veg))
 
@@ -178,7 +172,6 @@ ggplot() +
 
 
 ```{r warning=FALSE,message=FALSE,eval=TRUE}
-
 Lambda2 <- predict(fit2, ipoints(boundary, mesh), ~ sum(weight * exp(mySmooth + veg)))
 Lambda2
 ```
@@ -187,7 +180,6 @@ Look at the contributions to the linear predictor from the SPDE and from vegetat
 
 
 ```{r warning=FALSE,message=FALSE,eval=TRUE}
-
 lp2 <- predict(fit2, df, ~ mySmooth+veg)
 lp2.spde <- predict(fit2, df, ~ mySmooth)
 lp2.veg <- predict(fit2, df, ~ veg)
@@ -199,7 +191,6 @@ components being plotted (medians are plotted by default).
 
 
 ```{r warning=FALSE,message=FALSE,eval=TRUE}
-
 lprange <- range(lp2$median,lp2.veg$median,lp2.spde$median)
 csc <- scale_fill_gradientn(colours = brewer.pal(9,"YlOrRd"), limits = lprange)
 
@@ -212,7 +203,6 @@ plot.lp2.spde <- ggplot() + gg(lp2.spde) + csc + theme(legend.position = "bottom
 plot.lp2.veg <- ggplot() + gg(lp2.veg) + csc + theme(legend.position = "bottom") +
   gg(boundary, alpha = 0) + ggtitle("vegetation") + coord_equal()
 
-```{r warning=FALSE,message=FALSE,eval=TRUE, fig.height=5, fig.width=13}
 multiplot(plot.lp2, plot.lp2.spde, plot.lp2.veg, cols = 3)
 ```
 
@@ -228,8 +218,6 @@ mdl3 <- coordinates ~ mySmooth(map = coordinates, model = pcmatern) + Intercept
 fit3 <- lgcp(mdl3, nests, samplers = boundary)
 
 int3 <- predict(fit3, df, ~ exp(mySmooth + Intercept))
-
-```{r warning=FALSE,message=FALSE,eval=TRUE}
 
 ggplot() + 
   gg(int3) + 
@@ -249,7 +237,6 @@ We are going with Model `fit2`. Lets look at the spatial distribution of the
 coefficient of variation
 
 ```{r results="hide",warning=FALSE,message=FALSE,eval=TRUE}
-
 ggplot() + 
   gg(int2["cv"]) + 
   gg(boundary, alpha = 0) + 
@@ -262,7 +249,6 @@ which contains the fixed effect marginal distribution data
 
 
 ```{r warning=FALSE,message=FALSE,eval=TRUE}
-
 fn <- names(fit2$marginals.fixed)
 fn
 flist <- vector("list",length(fn))
@@ -275,8 +261,7 @@ Matern correlation and covariance functions
 for this model.
 
 
-```{r results="hide",warning=FALSE,message=FALSE, eval=TRUE, echo=FALSE}
-
+```{r results="hide",warning=FALSE,message=FALSE, eval=TRUE, echo=TRUE}
 spde.range <- spde.posterior(fit2, "mySmooth", what = "range")
 spde.logvar <- spde.posterior(fit2, "mySmooth", what= "log.variance")
 range.plot <- plot(spde.range)
@@ -288,15 +273,14 @@ covplot <- plot(spde.posterior(fit2, "mySmooth", what = "matern.covariance"))
 multiplot(covplot, corplot)
 ```
 
-Continuous covariate: 
-=============================================================================
+Continuous covariates
+-----------------------------------
 
 Now lets try a model with elevation as a (continuous) explanatory variable. (First centre elevations
 for more stable fitting.)
 
 
 ```{r results="hide",warning=FALSE,message=FALSE}
-
 elev <- gcov$elevation
 elev$elevation <- elev$elevation - mean(elev$elevation, na.rm = TRUE)
 
@@ -314,7 +298,6 @@ function we needd.
 
 
 ```{r results="hide",warning=FALSE,message=FALSE}
-
 f.elev <- function(x,y) {
   # turn coordinates into SpatialPoints object:
   spp <- SpatialPoints(data.frame(x=x,y=y)) 
@@ -333,7 +316,6 @@ We create our model to pass to lgcp thus:
 
 
 ```{r results="hide",warning=FALSE,message=FALSE}
-
 matern <- inla.spde2.pcmatern(mesh, 
                               prior.sigma = c(0.1, 0.01), 
                               prior.range = c(5, 0.01))
@@ -347,7 +329,6 @@ like this
 
 
 ```{r results="hide",warning=FALSE,message=FALSE,eval=FALSE}
-
 veg(map = gcov$vegetation, model = "factor")
 ```
 
@@ -355,7 +336,6 @@ whereas we specify a continuous effect like this:
 
 
 ```{r results="hide",warning=FALSE,message=FALSE,eval=FALSE}
-
 beta.elev(map = f.elev(x,y), model = "linear")
 ```
 
@@ -365,7 +345,6 @@ The model is fitted in the usual way:
 
 
 ```{r results="hide",warning=FALSE,message=FALSE,eval=TRUE}
-
 efit <- lgcp(emdl, nests, samplers = boundary) 
 ```
 
@@ -373,7 +352,6 @@ Summary and model selection
 
 
 ```{r results="hide",warning=FALSE,message=FALSE,eval=TRUE}
-
 summary(efit)
 INLA:::summary.inla(efit)
 deltaIC(fit1,fit2,fit3,efit)
@@ -383,7 +361,6 @@ Predict and plot the density
 
 
 ```{r results="hide",warning=FALSE,message=FALSE,eval=TRUE}
-
 e.int <- predict(efit, pixels(mesh), ~ exp(mySmooth + beta.elev + Intercept))
 
 ggplot() + 
@@ -402,13 +379,11 @@ appropriate text in place of '??' below.
  
 
 ```{r warning=FALSE,message=FALSE,eval=FALSE}
-
 e.lp <- predict(efit, coordinates ~ ??) # elevation effect and SPDE effect
 e.lp.elev <- predict(efit, coordinates ~ ??) # elevation effect only
 e.lp.spde <- predict(efit, coordinates ~ ??) # SPDE effect only
 
-```{r warning=FALSE,message=FALSE,eval=TRUE,echo=FALSE}
-
+```{r warning=FALSE,message=FALSE,eval=TRUE,echo=TRUE}
 e.lp <- predict(efit, pixels(mesh),  ~ mySmooth + beta.elev) # SOLUTION
 e.lp.elev <- predict(efit, pixels(mesh), ~ beta.elev)
 e.lp.spde <- predict(efit, pixels(mesh), ~ mySmooth)
@@ -419,7 +394,6 @@ variable, produces the plots we want.
 
 
 ```{r warning=FALSE,message=FALSE,eval=TRUE, fig.height=5, fig.width=13}
-
 lprange <- range(e.lp$median, e.lp.elev$median, e.lp.spde$median)
 
 library(RColorBrewer)
@@ -434,8 +408,6 @@ plot.e.lp.spde <- ggplot() + gg(e.lp.spde) + csc + theme(legend.position = "bott
 plot.e.lp.elev <- ggplot() + gg(e.lp.elev) + csc + theme(legend.position = "bottom")+
   gg(boundary, alpha = 0) + ggtitle("elevation") + coord_equal()
 
-```{r warning=FALSE,message=FALSE,eval=TRUE, fig.height=5, fig.width=13}
-
 multiplot(plot.e.lp, 
           plot.e.lp.spde,
           plot.e.lp.elev,
@@ -446,13 +418,10 @@ You might also want to look at the posteriors of the fixed effects and of the SP
 Adapt the code used for the vegetation factor to do this.
 
 
-```{r results="hide",warning=FALSE,message=FALSE, eval=TRUE, echo=FALSE}
-
+```{r results="hide",warning=FALSE,message=FALSE, eval=TRUE, echo=TRUE}
 fn <- names(efit$marginals.fixed)
 flist <- vector("list",length(fn))
 for(i in 1:length(fn)) flist[[i]] <- plot(efit,fn[i])
-
-```{r fig.show="hide",warning=FALSE,message=FALSE, eval=TRUE, echo=FALSE}
 
 multiplot(flist[[1]], flist[[2]], cols = 2)
 ```
@@ -468,7 +437,6 @@ spde.logvar <- spde.posterior(efit, "mySmooth", what = "log.variance")
 range.plot <- plot(spde.range)
 var.plot <- plot(spde.logvar)
 
-```{r fig.show="hide",warning=FALSE,message=FALSE, eval=TRUE, echo=TRUE}
 multiplot(range.plot, var.plot)
 corplot <- plot(spde.posterior(efit, "mySmooth", what = "matern.correlation"))
 covplot <- plot(spde.posterior(efit, "mySmooth", what = "matern.covariance"))
@@ -479,7 +447,6 @@ Also estimate abundance. The `data.frame` in the second call leads to inclusion 
 in the prediction object, for easier plotting.
 
 ```{r fig.show="hide",warning=FALSE,message=FALSE, eval=TRUE, echo=TRUE}
-
 Lambda <- predict(efit, ipoints(boundary, mesh),
                   ~ sum(weight * exp(mySmooth + beta.elev + Intercept)))
 Lambda
@@ -501,7 +468,7 @@ ggplot(data = Nest.e) +
   geom_line(aes(x = N, y = plugin_estimate, colour = "Plugin"))
 ```
 
-Some light relief
+A 1D Example
 ----------------
 Try fitting a 1-dimensional model to the point data in the `inlabru` dataset 
 `Poisson2_1D`. This comes with a covariate function called `cov2_1D`. Try to reproduce 
@@ -510,14 +477,12 @@ the plot below (used in lectures) showing the effects of the `Intercept + z` and
 practical, adding the covariate to the model specification.)
 
 
-```{r results="hide",warning=FALSE,message=FALSE,echo=FALSE}
-
+```{r results="hide",warning=FALSE,message=FALSE,echo=TRUE}
 data(Poisson2_1D)
 ss <- seq(0, 55, length = 200)
 z <- cov2_1D(ss)
 x <- seq(1, 55, length = 100)
 mesh <- inla.mesh.1d(x, degree = 1)
-
 
 mdl <- x ~ beta_z(map = cov2_1D(x), model = "linear") + spde1D(map=x, model = inla.spde2.matern(mesh)) + Intercept
 

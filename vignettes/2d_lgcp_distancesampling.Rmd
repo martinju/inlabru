@@ -30,7 +30,6 @@ Load libraries
 ```{r results="hide",warning=FALSE,message=FALSE}
 library(inlabru)
 library(INLA)
-library(mgcv)
 ```
 
 Use empricial Bayes in order to speed things up a little bit:
@@ -192,7 +191,7 @@ ggplot(data = Nest) +
   geom_line(aes(x = N, y = plugin_estimate, colour = "Plugin"))
 ```
 
-A Hazard-rate Detection Function Model
+Hazard-rate Detection Function
 -----------------------------------------------------------------
 Try doing this all again, but use this hazard-rate detection function model:
 
