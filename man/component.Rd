@@ -6,6 +6,9 @@
 \usage{
 component(...)
 }
+\arguments{
+\item{...}{A formula or a label (character)}
+}
 \description{
 Similar to glm(), gam() and inla() \link{bru} uses formula objects to describe response data and latent 
 (unknonw) components of the model to be fitted. However, in addition to the syntax compatible with 

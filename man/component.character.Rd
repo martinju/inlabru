@@ -38,8 +38,8 @@ is unique to inlabru.
 }
 \examples{
 
-# As an example, let us create a linear component. Here ,the component is called "myEffectOfX" 
-while the covariate the component acts on is called "x":
+# As an example, let us create a linear component. Here ,the component is 
+# called "myEffectOfX" while the covariate the component acts on is called "x":
 
 eff = component("myEffectOfX", model = "linear", map = x)
 summary(eff)
