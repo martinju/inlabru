@@ -52,5 +52,5 @@ Depends:
     methods,
     ggplot2,
 Additional_repositories: https://inla.r-inla-download.org/R/testing
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 VignetteBuilder: knitr
