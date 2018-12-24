@@ -106,8 +106,8 @@ component = function(...){UseMethod("component")}
 #' 
 #' @examples
 #' # As an example, let us create a linear component. Here ,the component is called "myLinearEffectOfX" 
-#' while the covariate the component acts on is called "x". Note that a 
-#' list of components is returned because the formula may define multiple components
+#' # while the covariate the component acts on is called "x". Note that a 
+#' # list of components is returned because the formula may define multiple components
 #' 
 #' eff = component(~ myLinearEffectOfX(map = x, model = "linear"))
 #' summary(eff2[[1]])
@@ -146,7 +146,9 @@ component.formula = function(formula) {
 #' @author Fabian E. Bachl <\email{bachlfab@@gmail.com}>
 #' 
 #' @examples
-#' 
+#' \donttest{
+#' if (require("INLA", quietly = TRUE)) {
+#'     
 #' # As an example, let us create a linear component. Here ,the component is 
 #' # called "myEffectOfX" while the covariate the component acts on is called "x":
 #' 
@@ -155,7 +157,8 @@ component.formula = function(formula) {
 #' 
 #' # A more complicated component:
 #' eff = component("myEffectOfX", model = inla.spde2.matern(inla.mesh.1d(1:10)), map = x)
-#' 
+#' }
+
 component.character = function(label,
                              data,
                              model,
@@ -259,15 +262,15 @@ make.default.mesh = function(component, model, model.type, fvals){
     mesh = NA
   }
   else if ( model.type %in% c("iid") ) {
-    if ( missing(n) ) { stop(sprintf(miss.msg, component$label, model.type, "n")) }
+    if ( missing(fvals$n) ) { stop(sprintf(miss.msg, component$label, model.type, "n")) }
     mesh = INLA::inla.mesh.1d(1:fvals$n)
   }
   else if ( model.type %in% c("seasonal") ) {
-    if ( missing(season.length) ) { stop(sprintf(miss.msg, component$label, model.type, "season.length")) }
+    if ( missing(fvals$season.length) ) { stop(sprintf(miss.msg, component$label, model.type, "season.length")) }
     mesh = INLA::inla.mesh.1d(1:fvals$season.length)
   }
   else if ( model.type %in% c("rw1", "rw2", "ar", "ar1", "ou") ) {
-    if ( missing(values) ) { stop(sprintf(miss.msg, component$label, model.type, "values")) }
+    if ( missing(fvals$values) ) { stop(sprintf(miss.msg, component$label, model.type, "values")) }
     mesh = INLA::inla.mesh.1d(sort(unique(fvals$values)))
   }
   else if ( model.type %in% c("spde") ) {
