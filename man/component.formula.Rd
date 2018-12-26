@@ -4,10 +4,12 @@
 \alias{component.formula}
 \title{inlabru latent model component construction using formulae}
 \usage{
-\method{component}{formula}(formula)
+\method{component}{formula}(object, ...)
 }
 \arguments{
-\item{formula}{A formula describing latent model components.}
+\item{object}{A formula describing latent model components.}
+
+\item{...}{Ignored arguments (S3 compatibility)}
 }
 \description{
 Similar to glm(), gam() and inla() \link{bru} uses formula objects to describe response data and latent 

@@ -33,12 +33,11 @@ index = function(...){UseMethod("index")}
 #' 
 #' @author Fabian E. Bachl <\email{bachlfab@@gmail.com}>
 #' @family Component constructor
-#' @param ... A formula or a label (character)
+#' @param object A formula or a label (character)
+#' @param ... Arguments passed on to \link{component.formula} or \link{component.character}
 #' @export 
-#' @examples
-#' 
 
-component = function(...){UseMethod("component")}
+component = function(object, ...){UseMethod("component")}
 
 
 #' inlabru latent model component construction using formulae
@@ -99,9 +98,9 @@ component = function(...){UseMethod("component")}
 #'  
 #' @aliases component.formula
 #' @export
-#' @method component formula
 #' @family Component constructor
-#' @param formula A formula describing latent model components.
+#' @param object A formula describing latent model components.
+#' @param ... Ignored arguments (S3 compatibility)
 #' @author Fabian E. Bachl <\email{bachlfab@@gmail.com}>
 #' 
 #' @examples
@@ -115,10 +114,10 @@ component = function(...){UseMethod("component")}
 #' 
 
 
-component.formula = function(formula) {
-  code = code.components(formula)
+component.formula = function(object, ...) {
+  code = code.components(object)
   parsed = lapply(code, function(x) parse(text=x))
-  components = lapply(parsed, function(x) eval(x, envir = environment(formula)))
+  components = lapply(parsed, function(x) eval(x, envir = environment(object)))
   names(components) = lapply(components, function(x) x$label)
   components
 }
@@ -132,7 +131,7 @@ component.formula = function(formula) {
 #' @family Component constructor
 #' @export
 #' @method component character
-#' @param label A string giving the component its name
+#' @param object A string giving the component its name
 #' @param data EXPERIMENTAL
 #' @param model Either one of "offset", "factor", "linear" or a model accepted by INLA's \code{f} function
 #' @param map EXPERIMENTAL
@@ -159,8 +158,9 @@ component.formula = function(formula) {
 #' # A more complicated component:
 #' eff = component("myEffectOfX", model = inla.spde2.matern(inla.mesh.1d(1:10)), map = x)
 #' }
+#' }
 
-component.character = function(label,
+component.character = function(object,
                              data,
                              model,
                              map,
@@ -179,6 +179,9 @@ component.character = function(label,
   #
   # Supported:
   # btypes = c("offset", "factor", "linear", "clinear", "iid", "seasonal", "rw1", "rw2", "ar", "ar1", "ou", "spde")
+  
+  # The label
+  label = object
   
   # Model type as character
   model.type = model

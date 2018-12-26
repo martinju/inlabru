@@ -4,10 +4,12 @@
 \alias{component}
 \title{inlabru latent model component construction}
 \usage{
-component(...)
+component(object, ...)
 }
 \arguments{
-\item{...}{A formula or a label (character)}
+\item{object}{A formula or a label (character)}
+
+\item{...}{Arguments passed on to \link{component.formula} or \link{component.character}}
 }
 \description{
 Similar to glm(), gam() and inla() \link{bru} uses formula objects to describe response data and latent 
@@ -17,9 +19,6 @@ Similar to glm(), gam() and inla() \link{bru} uses formula objects to describe r
 In inlabru, latent components can be constructed using R formulae or explicit parameter. For background 
 information on the formulae inlabru accepts please see \link{component.formula}. For more details on the
 model parameters and how inlabru employs INLA's \code{f} function please see \link{component.character}
-}
-\examples{
-
 }
 \seealso{
 Other Component constructor: \code{\link{component.character}},
