@@ -8,16 +8,14 @@ bru(components = y ~ Intercept, family = NULL, data = NULL, ...,
   options = list())
 }
 \arguments{
-\item{components}{a \link{formula} describing the latent components. See
-\link{bru.components} for details.}
+\item{components}{a \link{formula} describing the latent components. See \link{component} for details.}
 
-\item{family}{A string indicating the likelihood family. The default is
-\code{gaussian} with identity link. In addition to the likelihoods provided
-by inla (see \code{inla.models()$likelihood}) inlabru supports fitting Cox
-processes via \code{family = "cp"}. The latter requires contructing a
-likelihood using the \link{like} function and providing it via the ...
-parameter list. As an alternative to bru, the \link{lgcp} function provides
-a convenient interface to fitting Cox processes. See details.}
+\item{family}{A string indicating the likelihood family. The default is \code{gaussian} with 
+identity link. In addition to the likelihoods provided by inla 
+(see \code{inla.models()$likelihood}) inlabru supports fitting Cox processes 
+via \code{family = "cp"}. The latter requires contructing a likelihood using the \link{like}
+function and providing it via the ... parameter list. As an alternative to bru, the \link{lgcp} 
+function provides a convenient interface to fitting Cox processes. See details.}
 
 \item{data}{A data.frame or SpatialPoints[DataFrame] object. See details.}
 
