@@ -117,7 +117,7 @@ component = function(object, ...){UseMethod("component")}
 component.formula = function(object, ...) {
   code = code.components(object)
   parsed = lapply(code, function(x) parse(text=x))
-  components = lapply(parsed, function(x) eval(x, envir = environment(object)))
+  components = lapply(parsed, function(component.expression) eval(component.expression, envir = environment(object)))
   names(components) = lapply(components, function(x) x$label)
   components
 }
