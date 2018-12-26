@@ -64,12 +64,13 @@ On the other hand, predict may be used to only look at a transformation of the r
 }
 
 \examples{
-# As an example, let us create a linear component. Here ,the component is called "myLinearEffectOfX" 
-while the covariate the component acts on is called "x". Note that a 
-list of components is returned because the formula may define multiple components
+# As an example, let us create a linear component. Here, the component is 
+# called "myLinearEffectOfX" while the covariate the component acts on is 
+# called "x". Note that a list of components is returned because the 
+# formula may define multiple components
 
 eff = component(~ myLinearEffectOfX(map = x, model = "linear"))
-summary(eff2[[1]])
+summary(eff[[1]])
 
 }
 \seealso{

@@ -8,7 +8,7 @@ bru(components = y ~ Intercept, family = NULL, data = NULL, ...,
   options = list())
 }
 \arguments{
-\item{components}{a \link{formula} describing the latent components. See \link{components} for details.}
+\item{components}{a \link{formula} describing the latent components. See \link{component} for details.}
 
 \item{family}{A string indicating the likelihood family. The default is \code{gaussian} with 
 identity link. In addition to the likelihoods provided by inla 
