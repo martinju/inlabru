@@ -192,7 +192,8 @@ component.character = function(label,
                 group.char = as.character(substitute(group)), # Name of the data column holding the group index
                 values = values,
                 A.msk = A.msk,
-                model = model)
+                model = model,
+                env = parent.frame())
   
   # Main bit
   if ( model.type %in% c("offset") ) {
