@@ -2,17 +2,17 @@
 % Please edit documentation in R/effect.R
 \name{value}
 \alias{value}
-\alias{value.component}
-\title{Evaluate an component}
+\alias{value.effect}
+\title{Evaluate an effect}
 \usage{
 value(...)
 
-\method{value}{component}(component, data, state, A = NULL, ...)
+\method{value}{effect}(effect, data, state, A = NULL, ...)
 }
 \arguments{
 \item{...}{Unused.}
 
-\item{component}{An component.}
+\item{effect}{An effect.}
 
 \item{data}{A \code{data.frame} or Spatial* object of covariates and/or point locations.}
 
@@ -21,10 +21,10 @@ value(...)
 \item{A}{A matrix overriding the default projection matrix.}
 }
 \value{
-A numeric vector of component values
+A numeric vector of effect values
 }
 \description{
-Calculates a latent component given some data and the state of the component's internal random variables.
+Calculates a latent effect given some data and the state of the effect's internal random variables.
 }
 \details{
 TODO: Improve speed for iterated calls by making 'mapped' a parameter
