@@ -86,7 +86,22 @@ ggplot() + gg(mesh2) +
   #gg(nests) + 
   gg(boundary) + 
   coord_fixed() + 
-    gg(aa)
-  ggtitle("Points")
+    #gg(aa)
+  ggtitle("Points") +
+  geom_point(mapping = aes(x=x,y=y,col="red"),data=as.data.frame(ips))
 
+
+plot(mesh2,edge.color=1,lwd=8)
+plot(imesh,add=T,edge.color=2,lwd=2)
+
+    ggplot() + gg(mesh2) + 
+  #gg(nests) + 
+  gg(boundary) + 
+  coord_fixed() + 
+  #gg(aa)
+  ggtitle("Points") +
+  geom_point(mapping = aes(x=x,y=y,col="red"),data=as.data.frame(ips))
+
+  
+points(coordinates(lik$ips))
 
